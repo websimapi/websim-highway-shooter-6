@@ -53,6 +53,8 @@ window.addEventListener('load', () => {
     let lastTime = 0;
     function animate(timestamp = 0) {
         if (!game || game.gameOver) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
             return;
         }
 

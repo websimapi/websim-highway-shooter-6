@@ -1,5 +1,5 @@
 import { jsxDEV } from "react/jsx-dev-runtime";
-import React from "react";
+import React, { useMemo } from "react";
 import { AbsoluteFill, useCurrentFrame, Img, Audio, Sequence } from "remotion";
 const HealthText = ({ data, zIndex }) => {
   if (!data || data.health <= 0) return null;
@@ -82,7 +82,7 @@ const ReplayComposition = ({ history, gameWidth, gameHeight }) => {
   if (!currentFrameData) {
     return null;
   }
-  const { player, projectiles, barrels, enemies, barriers, powerups, particles, bombEffects, audioEvents } = currentFrameData;
+  const { player, projectiles, barrels, enemies, barriers, powerups, particles, bombEffects } = currentFrameData;
   const scale = 540 / gameWidth;
   const offsetX = 0;
   const offsetY = (960 - gameHeight * scale) / 2;
@@ -95,82 +95,85 @@ const ReplayComposition = ({ history, gameWidth, gameHeight }) => {
     width: gameWidth,
     height: gameHeight
   };
+  const audioSequences = useMemo(() => {
+    return history.flatMap(
+      (frameData, frameIndex) => frameData.audioEvents.map((audio, audioIndex) => /* @__PURE__ */ jsxDEV(Sequence, { from: frameIndex, durationInFrames: 60, children: /* @__PURE__ */ jsxDEV(Audio, { src: `/${audio}.mp3` }, void 0, false, {
+        fileName: "<stdin>",
+        lineNumber: 102,
+        columnNumber: 21
+      }) }, `audio-${frameIndex}-${audioIndex}`, false, {
+        fileName: "<stdin>",
+        lineNumber: 101,
+        columnNumber: 17
+      }))
+    );
+  }, [history]);
   return /* @__PURE__ */ jsxDEV(AbsoluteFill, { style: { backgroundColor: "#283747" }, children: [
     /* @__PURE__ */ jsxDEV("div", { style: transformStyle, children: [
       /* @__PURE__ */ jsxDEV(GameObject, { data: player, textureUrl: "/player_ship.png", zIndex: 5 }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 101,
+        lineNumber: 112,
         columnNumber: 17
       }),
       /* @__PURE__ */ jsxDEV(GameObject, { data: player, textureUrl: "/weapon.png", zIndex: 6 }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 102,
+        lineNumber: 113,
         columnNumber: 17
       }),
       projectiles.map((p, i) => /* @__PURE__ */ jsxDEV(GameObject, { data: p, textureUrl: "/projectile.png", zIndex: 4 }, `proj-${i}`, false, {
         fileName: "<stdin>",
-        lineNumber: 105,
+        lineNumber: 116,
         columnNumber: 44
       })),
       barrels.map((b, i) => /* @__PURE__ */ jsxDEV(GameObject, { data: b, textureUrl: "/barrel.png", zIndex: 2 }, `barl-${i}`, false, {
         fileName: "<stdin>",
-        lineNumber: 106,
+        lineNumber: 117,
         columnNumber: 40
       })),
       barrels.map((b, i) => /* @__PURE__ */ jsxDEV(HealthText, { data: b, zIndex: 3 }, `barl-h-${i}`, false, {
         fileName: "<stdin>",
-        lineNumber: 107,
+        lineNumber: 118,
         columnNumber: 40
       })),
       enemies.map((e, i) => /* @__PURE__ */ jsxDEV(GameObject, { data: e, textureUrl: "/enemy.png", zIndex: 4 }, `enmy-${i}`, false, {
         fileName: "<stdin>",
-        lineNumber: 108,
+        lineNumber: 119,
         columnNumber: 40
       })),
       barriers.map((b, i) => /* @__PURE__ */ jsxDEV(GameObject, { data: b, textureUrl: "/barrier.png", zIndex: 2 }, `bari-${i}`, false, {
         fileName: "<stdin>",
-        lineNumber: 109,
+        lineNumber: 120,
         columnNumber: 41
       })),
       barriers.map((b, i) => /* @__PURE__ */ jsxDEV(HealthText, { data: b, zIndex: 3 }, `bari-h-${i}`, false, {
         fileName: "<stdin>",
-        lineNumber: 110,
+        lineNumber: 121,
         columnNumber: 41
       })),
       powerups.map((p, i) => /* @__PURE__ */ jsxDEV(GameObject, { data: p, textureUrl: `/${p.type}.png`, zIndex: 7 }, `pow-${i}`, false, {
         fileName: "<stdin>",
-        lineNumber: 111,
+        lineNumber: 122,
         columnNumber: 41
       })),
       bombEffects.map((b, i) => /* @__PURE__ */ jsxDEV(BombEffect, { data: b }, `bomb-e-${i}`, false, {
         fileName: "<stdin>",
-        lineNumber: 114,
+        lineNumber: 125,
         columnNumber: 44
       })),
       particles.map((p, i) => /* @__PURE__ */ jsxDEV(Particle, { data: p }, `part-${i}`, false, {
         fileName: "<stdin>",
-        lineNumber: 115,
+        lineNumber: 126,
         columnNumber: 42
       }))
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 99,
+      lineNumber: 110,
       columnNumber: 13
     }),
-    history.flatMap(
-      (frameData, frameIndex) => frameData.audioEvents.map((audio, audioIndex) => /* @__PURE__ */ jsxDEV(Sequence, { from: frameIndex, durationInFrames: 60, children: /* @__PURE__ */ jsxDEV(Audio, { src: `/${audio}.mp3` }, void 0, false, {
-        fileName: "<stdin>",
-        lineNumber: 122,
-        columnNumber: 25
-      }) }, `audio-${frameIndex}-${audioIndex}`, false, {
-        fileName: "<stdin>",
-        lineNumber: 121,
-        columnNumber: 21
-      }))
-    )
+    audioSequences
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 98,
+    lineNumber: 109,
     columnNumber: 9
   });
 };
