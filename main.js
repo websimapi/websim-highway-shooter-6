@@ -8,6 +8,7 @@ window.addEventListener('load', () => {
     canvas.height = window.innerHeight;
 
     let game;
+    let isGameOver = false;
 
     const startScreen = document.getElementById('start-screen');
     const startButton = document.getElementById('start-button');
@@ -25,6 +26,7 @@ window.addEventListener('load', () => {
         gameOverScreen.style.display = 'none';
         uiContainer.style.display = 'flex';
         powerupTimerEl.style.display = 'none';
+        isGameOver = false;
 
         // Fix: Explicitly update canvas dimensions on restart
         canvas.width = window.innerWidth;
@@ -45,17 +47,22 @@ window.addEventListener('load', () => {
     
     let lastTime = 0;
     function animate(timestamp = 0) {
+        if (isGameOver) return; // Stop the loop if game is over.
+
         const deltaTime = timestamp - lastTime;
         lastTime = timestamp;
 
-        // ctx.clearRect(0, 0, canvas.width, canvas.height); // No longer needed
-        if (game.assetsLoaded) { // Only update and draw if assets are ready
+        if (game && game.assetsLoaded) { // Only update and draw if assets are ready
             game.update(deltaTime);
             game.draw();
         }
         
-        if (!game.gameOver) {
+        if (game && !game.gameOver) {
             requestAnimationFrame(animate);
+        } else if (game && game.gameOver) {
+            // Game over logic is now handled in game.update, which calls showGameOver once.
+            // We just need to stop the animation loop.
+            isGameOver = true;
         }
     }
 
