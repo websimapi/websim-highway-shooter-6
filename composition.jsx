@@ -157,15 +157,17 @@ const ReplayComposition = ({ history, gameWidth, gameHeight }) => {
       lineNumber: 99,
       columnNumber: 13
     }),
-    audioEvents.map((audio, i) => /* @__PURE__ */ jsxDEV(Sequence, { from: frame, durationInFrames: 1, children: /* @__PURE__ */ jsxDEV(Audio, { src: `/${audio}.mp3` }, void 0, false, {
-      fileName: "<stdin>",
-      lineNumber: 121,
-      columnNumber: 21
-    }) }, `audio-${i}`, false, {
-      fileName: "<stdin>",
-      lineNumber: 120,
-      columnNumber: 17
-    }))
+    history.flatMap(
+      (frameData, frameIndex) => frameData.audioEvents.map((audio, audioIndex) => /* @__PURE__ */ jsxDEV(Sequence, { from: frameIndex, durationInFrames: 60, children: /* @__PURE__ */ jsxDEV(Audio, { src: `/${audio}.mp3` }, void 0, false, {
+        fileName: "<stdin>",
+        lineNumber: 122,
+        columnNumber: 25
+      }) }, `audio-${frameIndex}-${audioIndex}`, false, {
+        fileName: "<stdin>",
+        lineNumber: 121,
+        columnNumber: 21
+      }))
+    )
   ] }, void 0, true, {
     fileName: "<stdin>",
     lineNumber: 98,

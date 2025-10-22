@@ -8,7 +8,7 @@ window.addEventListener('load', () => {
     canvas.height = window.innerHeight;
 
     let game;
-    let isGameOver = false;
+    let animationFrameId = null;
 
     const startScreen = document.getElementById('start-screen');
     const startButton = document.getElementById('start-button');
@@ -22,13 +22,16 @@ window.addEventListener('load', () => {
 
     function startGame() {
         if (unmountReplay) unmountReplay();
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+
         startScreen.style.display = 'none';
         gameOverScreen.style.display = 'none';
         uiContainer.style.display = 'flex';
         powerupTimerEl.style.display = 'none';
-        isGameOver = false;
-
-        // Fix: Explicitly update canvas dimensions on restart
+        
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
@@ -42,31 +45,33 @@ window.addEventListener('load', () => {
         game.onScoreUpdate = updateScore;
         game.onBombUpdate = updateBombCount;
         game.onPowerUpUpdate = updatePowerupTimer;
+        
+        lastTime = 0; // Reset timer for new game
         animate();
     }
     
     let lastTime = 0;
     function animate(timestamp = 0) {
-        if (isGameOver) return; // Stop the loop if game is over.
+        if (!game || game.gameOver) {
+            return;
+        }
+
+        animationFrameId = requestAnimationFrame(animate);
 
         const deltaTime = timestamp - lastTime;
         lastTime = timestamp;
 
-        if (game && game.assetsLoaded) { // Only update and draw if assets are ready
+        if (game.assetsLoaded) { // Only update and draw if assets are ready
             game.update(deltaTime);
             game.draw();
-        }
-        
-        if (game && !game.gameOver) {
-            requestAnimationFrame(animate);
-        } else if (game && game.gameOver) {
-            // Game over logic is now handled in game.update, which calls showGameOver once.
-            // We just need to stop the animation loop.
-            isGameOver = true;
         }
     }
 
     function showGameOver(score, history) {
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
         uiContainer.style.display = 'none';
         gameOverScreen.style.display = 'flex';
         finalScoreEl.textContent = score;
